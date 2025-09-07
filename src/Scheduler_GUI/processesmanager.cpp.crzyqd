@@ -1,0 +1,85 @@
+#include "processesmanager.h"
+
+ProcessesManager::ProcessesManager(QWidget *parent, int schedulerType)
+    : QWidget{parent}
+{
+    initialize(schedulerType);
+}
+
+void ProcessesManager::initialize(int schedulerType) {
+    processNameInput = new QLineEdit();
+    processNameInput -> setPlaceholderText("Process Name");
+
+    burstTimeInput = new QSpinBox();
+    arrivalTimeInput = new QSpinBox();
+
+    burstTimeInput -> setMaximum(500);
+    arrivalTimeInput -> setMaximum(500);
+    addProcessButton = new QPushButton("Add Process");
+
+    arrivalTimeLabel = new QLabel("Arrival Time");
+    burstTimeLabel = new QLabel("Burst Time");
+
+
+    QVBoxLayout  *inputBox = new QVBoxLayout();
+    inputBox -> addWidget(processNameInput);
+    inputBox -> addWidget(arrivalTimeLabel);
+    inputBox -> addWidget(arrivalTimeInput);
+    inputBox -> addWidget(burstTimeLabel);
+    inputBox -> addWidget(burstTimeInput);
+
+    inputBox -> setAlignment(Qt::AlignTop);
+        priorityLabel = new QLabel("Priority");
+        priorityInput = new QSpinBox();
+        priorityInput -> setMaximum(500);
+        inputBox -> addWidget(priorityLabel);
+        inputBox -> addWidget(priorityInput);
+
+    if(schedulerType != 1) {
+        priorityInput -> hide();
+        priorityLabel -> hide();
+    }
+
+    inputBox -> addWidget(addProcessButton);
+
+    QTableWidget *processesTable = new QTableWidget();
+    processesTable -> setColumnCount(3);
+    processesTable -> setVerticalHeaderLabels({"Name", "Arrival Time", "Burst Time"});
+    if(schedulerType == 1) {
+        processesTable -> insertColumn(1);
+        processesTable -> setV
+    }
+    QHBoxLayout *top = new QHBoxLayout();
+    top -> addLayout(inputBox);
+    top -> addWidget(processesTable);
+
+    continueButton = new QPushButton("Continue");
+    backButton = new QPushButton("Back");
+
+    QHBoxLayout *bottom = new QHBoxLayout();
+    bottom -> addWidget(backButton);
+    bottom -> addWidget(continueButton);
+    bottom -> setAlignment(Qt::AlignRight);
+    QVBoxLayout *container = new QVBoxLayout();
+    container -> addLayout(top);
+    container -> addLayout(bottom);
+    setLayout(container);
+    connect(addProcessButton, SIGNAL (clicked()), this, SLOT (onAddProcessClicked()));
+}
+
+void ProcessesManager::onAddProcessClicked() {
+    if(processNameInput -> text() == "") {
+        qDebug("Name is empty");
+    } else {
+        int arrivalTime = arrivalTimeInput -> value();
+        int burstTime = burstTimeInput -> value();
+        int priority = priorityInput ->value();
+        QString processName = processNameInput -> text();
+        qDebug() << arrivalTime << burstTime << priority << processName;
+        arrivalTimeInput -> setValue(0);
+        burstTimeInput -> setValue(0);
+        priorityInput -> setValue(0);
+        processNameInput -> setText("");
+    }
+}
+
